@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>麻城市文明吸烟点</title>
+  <!-- 引入字体图标（保证图标正常显示） -->
+  <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    /* 全局样式重置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f3f4f6;
+      color: #1f2937;
+      scroll-behavior: smooth;
+      width: 100%;
+      max-width: 750px;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+
+    /* 通用样式 */
+    .container {
+      width: 100%;
+      padding: 0 16px;
+      margin: 0 auto;
+    }
+
+    .card-shadow {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    .btn-success {
+      background-color: #16a34a;
+      color: white;
+    }
+
+    /* 动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+
+    /* 顶部导航 */
+    header {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: white;
+      z-index: 999;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo i {
+      color: #f97316;
+      font-size: 20px;
+    }
+
+    .logo h1 {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    .nav-list {
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+    }
+
+    .nav-list a {
+      color: #1f2937;
+      text-decoration: none;
+    }
+
+    .nav-list a:hover {
+      color: #2563eb;
+    }
+
+    /* 英雄区 */
+    .hero {
+      padding: 40px 0 30px;
+      background: linear-gradient(to right, #2563ebdd, #2563eb);
+      color: white;
+      margin-top: 10px;
+    }
+
+    .hero h2 {
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      max-width: 600px;
+    }
+
+    /* 地图/控烟室区域 */
+    .map-section {
+      padding: 30px 0;
+      background-color: white;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .section-title h3 {
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .section-title p {
+      color: #6b7280;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .map-container {
+      width: 100%;
+      height: 350px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .map-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .map-point {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: #2563eb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .point1 { top: 40%; left: 30%; }
+    .point2 { top: 50%; left: 60%; }
+    .point3 { top: 70%; left: 45%; }
+
+    /* 弹窗样式 */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .popup-content {
+      background-color: white;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 90%;
+      width: 400px;
+    }
+
+    .popup-close {
+      text-align: right;
+      cursor: pointer;
+      font-size: 20px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .popup h4 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .popup p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    /* 吸烟点列表 */
+    .points-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .point-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+
+    .point-card:hover {
+      border-color: #2563eb;
+    }
+
+    .point-card-header {
+      display: flex;
+      gap: 12px;
+    }
+
+    .point-icon {
+      background-color: rgba(37, 99, 235, 0.1);
+      padding: 8px;
+      border-radius: 50%;
+      color: #2563eb;
+    }
+
+    .point-info h4 {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .point-info p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .point-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+
+    .point-nav {
+      font-size: 14px;
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    /* 吸烟规则区域 */
+    .rules-section {
+      padding: 30px 0;
+      background-color: #f3f4f6;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .rule-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .rule-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .rule-icon {
+      background-color: rgba(249, 115, 22, 0.1);
+      padding: 8px;
+      border-radius: 50%;
+      color: #f97316;
+      font-size: 20px;
+    }
+
+    .rule-icon.success {
+      background-color: rgba(37, 99, 235, 0.1);
+      color: #2563eb;
+    }
+
+    .rule-card-header h4 {
+      font-size: 20px;
+      font-weight: bold;
+      color: #f97316;
+    }
+
+    .rule-card-header h4.success {
+      color: #2563eb;
+    }
+
+    .rule-list {
+      list-style: none;
+    }
+
+    .rule-item {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+
+    .rule-item i {
+      color: #f97316;
+      margin-top: 4px;
+    }
+
+    .rule-item.success i {
+      color: #2563eb;
+    }
+
+    .rule-item span {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #4b5563;
+    }
+
+    /* 倡议书区域 */
+    .initiative-section {
+      padding: 30px 0;
+      background-color: rgba(37, 99, 235, 0.05);
+    }
+
+    .initiative-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 700px;
+      margin: 0 auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .initiative-content {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #4b5563;
+      margin-bottom: 24px;
+    }
+
+    .initiative-content p {
+      margin-bottom: 16px;
+    }
+
+    .initiative-content ol {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+
+    .initiative-content li {
+      margin-bottom: 8px;
+    }
+
+    .initiative-sign {
+      text-align: right;
+      margin-top: 16px;
+    }
+
+    .initiative-btn {
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    /* 底部 */
+    footer {
+      background-color: #1f2937;
+      color: white;
+      padding: 30px 0 20px;
+      margin-top: 20px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .footer-col h4 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .footer-col p, .footer-col li {
+      font-size: 14px;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col li {
+      margin-bottom: 8px;
+    }
+
+    .footer-col a {
+      color: #9ca3af;
+      text-decoration: none;
+    }
+
+    .footer-col a:hover {
+      color: white;
+    }
+
+    .footer-copyright {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid #374151;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    /* 适配平板 */
+    @media (min-width: 768px) {
+      .points-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .rules-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .footer-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <header class="animate-fadeIn">
+    <div class="container header-content">
+      <div class="logo">
+        <i class="fa fa-smoking-ban"></i>
+        <h1>麻城市文明吸烟点</h1>
+      </div>
+      <nav>
+        <ul class="nav-list">
+          <li><a href="#map">吸烟点地图</a></li>
+          <li><a href="#rules">吸烟规则</a></li>
+          <li><a href="#initiative">文明倡议</a></li>
+          <li><a href="#room">控烟室实拍</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 英雄区 -->
+  <section class="hero animate-fadeIn">
+    <div class="container">
+      <h2>文明吸烟 共建美好麻城</h2>
+      <p>为保障公众健康，维护麻城公共环境，合理规划吸烟区域，倡导文明吸烟行为，共创和谐生活空间。</p>
+      <a href="#map" class="btn">
+        <i class="fa fa-map-marker"></i>
+        查看麻城吸烟点
+      </a>
+    </div>
+  </section>
+
+  <!-- 吸烟点地图 -->
+  <section id="map" class="map-section">
+    <div class="container">
+      <div class="section-title animate-fadeIn delay-100">
+        <h3>麻城市吸烟点分布地图</h3>
+        <p>定位并查看周边合规吸烟点，选择最近的吸烟区域，文明吸烟不越界</p>
+      </div>
+      
+      <!-- 地图容器（控烟室图片） -->
+      <div class="map-container card-shadow animate-fadeIn delay-200">
+        <img src="https://i.imgur.com/8Z7X9Y6.jpg" alt="麻城市控烟室实拍" class="map-img">
+        <!-- 吸烟点标记 -->
+        <div class="map-point point1" onclick="openPopup('popup1')">1</div>
+        <div class="map-point point2" onclick="openPopup('popup2')">2</div>
+        <div class="map-point point3" onclick="openPopup('popup3')">3</div>
+      </div>
+      
+      <!-- 弹窗1：五脑山森林景区 -->
+      <div class="popup" id="popup1">
+        <div class="popup-content">
+          <div class="popup-close" onclick="closePopup('popup1')">×</div>
+          <h4>五脑山森林景区吸烟点</h4>
+          <p>地址：湖北省黄冈市麻城市五脑山街道五脑山国家森林公园</p>
+          <p>开放时间：6:00-20:00</p>
+          <p>容纳人数：15人</p>
+        </div>
+      </div>
+      
+      <!-- 弹窗2：汽运站 -->
+      <div class="popup" id="popup2">
+        <div class="popup-content">
+          <div class="popup-close" onclick="closePopup('popup2')">×</div>
+          <h4>麻城市汽运站吸烟点</h4>
+          <p>地址：湖北省黄冈市麻城市金桥大道182号</p>
+          <p>开放时间：6:00-22:00</p>
+          <p>容纳人数：10人</p>
+        </div>
+      </div>
+      
+      <!-- 弹窗3：政务服务中心 -->
+      <div class="popup" id="popup3">
+        <div class="popup-content">
+          <div class="popup-close" onclick="closePopup('popup3')">×</div>
+          <h4>麻城市政务服务中心吸烟点</h4>
+          <p>地址：湖北省黄冈市麻城市金桥大道72号</p>
+          <p>开放时间：8:00-18:00</p>
+          <p>容纳人数：8人</p>
+        </div>
+      </div>
+      
+      <!-- 吸烟点列表 -->
+      <div class="points-list animate-fadeIn delay-300">
+        <!-- 五脑山森林景区 -->
+        <div class="point-card">
+          <div class="point-card-header">
+            <div class="point-icon">
+              <i class="fa fa-map-marker"></i>
+            </div>
+            <div class="point-info">
+              <h4>五脑山森林景区吸烟点</h4>
+              <p>地址：湖北省黄冈市麻城市五脑山街道五脑山国家森林公园</p>
+              <div class="point-meta">
+                <span><i class="fa fa-clock-o"></i> 开放时间：6:00-20:00</span>
+                <span><i class="fa fa-users"></i> 容纳人数：15人</span>
+              </div>
+              <a href="https://amap.com/navigation?to=湖北省黄冈市麻城市五脑山街道五脑山国家森林公园&type=drive" target="_blank" class="point-nav">
+                <i class="fa fa-directions"></i> 高德导航前往
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 汽运站 -->
+        <div class="point-card">
+          <div class="point-card-header">
+            <div class="point-icon">
+              <i class="fa fa-map-marker"></i>
+            </div>
+            <div class="point-info">
+              <h4>麻城市汽运站吸烟点</h4>
+              <p>地址：湖北省黄冈市麻城市金桥大道182号</p>
+              <div class="point-meta">
+                <span><i class="fa fa-clock-o"></i> 开放时间：6:00-22:00</span>
+                <span><i class="fa fa-users"></i> 容纳人数：10人</span>
+              </div>
+              <a href="https://amap.com/navigation?to=湖北省黄冈市麻城市金桥大道182号&type=drive" target="_blank" class="point-nav">
+                <i class="fa fa-directions"></i> 高德导航前往
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 政务服务中心 -->
+        <div class="point-card">
+          <div class="point-card-header">
+            <div class="point-icon">
+              <i class="fa fa-map-marker"></i>
+            </div>
+            <div class="point-info">
+              <h4>麻城市政务服务中心吸烟点</h4>
+              <p>地址：湖北省黄冈市麻城市金桥大道72号</p>
+              <div class="point-meta">
+                <span><i class="fa fa-clock-o"></i> 开放时间：8:00-18:00</span>
+                <span><i class="fa fa-users"></i> 容纳人数：8人</span>
+              </div>
+              <a href="https://amap.com/navigation?to=湖北省黄冈市麻城市金桥大道72号&type=drive" target="_blank" class="point-nav">
+                <i class="fa fa-directions"></i> 高德导航前往
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- 本地图片版实拍模块 -->
+<section id="room" class="map-section">
+  <div class="container">
+    <div class="section-title animate-fadeIn">
+      <h3>麻城市吸烟点实拍展示</h3>
+      <p>标准化吸烟点配置，文明吸烟更舒适</p>
+    </div>
+    <div class="photos-container animate-fadeIn delay-200" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
+      <!-- 本地图片路径：与HTML同目录 -->
+      <div class="photo-item" style="width: 100%; max-width: 300px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <img src="img1.jpg" alt="木质吸烟亭实拍" style="width: 100%; height: 220px; object-fit: cover;">
+      </div>
+      <div class="photo-item" style="width: 100%; max-width: 300px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <img src="img2.jpg" alt="红棕色吸烟亭实拍" style="width: 100%; height: 220px; object-fit: cover;">
+      </div>
+      <div class="photo-item" style="width: 100%; max-width: 300px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <img src="img3.jpg" alt="烟灰柱实拍" style="width: 100%; height: 220px; object-fit: cover;">
+      </div>
+      <div class="photo-item" style="width: 100%; max-width: 300px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <img src="img4.jpg" alt="环保控烟室实拍" style="width: 100%; height: 220px; object-fit: cover;">
+      </div>
+    </div>
+    <div class="animate-fadeIn delay-300" style="text-align:center; margin-top:16px; color:#6b7280;">
+      <p>涵盖户外吸烟亭、室内环保控烟室，配备休息设施与文明提示</p>
+    </div>
+  </div>
+</section>
+
+  <!-- 吸烟规则说明 -->
+  <section id="rules" class="rules-section">
+    <div class="container">
+      <div class="section-title animate-fadeIn">
+        <h3>麻城市文明吸烟行为规范</h3>
+        <p>遵守以下规则，共同维护麻城公共环境与他人健康</p>
+      </div>
+      
+      <div class="rules-grid">
+        <!-- 禁止行为 -->
+        <div class="rule-card animate-fadeIn delay-100">
+          <div class="rule-card-header">
+            <div class="rule-icon">
+              <i class="fa fa-ban"></i>
+            </div>
+            <h4>禁止行为</h4>
+          </div>
+          <ul class="rule-list">
+            <li class="rule-item">
+              <i class="fa fa-times-circle"></i>
+              <span>非吸烟点区域吸烟，包括室内公共场所、电梯、楼道等</span>
+            </li>
+            <li class="rule-item">
+              <i class="fa fa-times-circle"></i>
+              <span>吸烟后随意丢弃烟蒂，未放入指定烟灰桶</span>
+            </li>
+            <li class="rule-item">
+              <i class="fa fa-times-circle"></i>
+              <span>在吸烟点外的禁烟区域逗留吸烟</span>
+            </li>
+            <li class="rule-item">
+              <i class="fa fa-times-circle"></i>
+              <span>向非吸烟者吐烟圈，影响他人呼吸</span>
+            </li>
+            <li class="rule-item">
+              <i class="fa fa-times-circle"></i>
+              <span>未成年人进入吸烟点或购买烟草制品</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- 倡导行为 -->
+        <div class="rule-card animate-fadeIn delay-200">
+          <div class="rule-card-header">
+            <div class="rule-icon success">
+              <i class="fa fa-check-circle"></i>
+            </div>
+            <h4 class="success">倡导行为</h4>
+          </div>
+          <ul class="rule-list">
+            <li class="rule-item success">
+              <i class="fa fa-check-circle"></i>
+              <span>仅在指定吸烟点内吸烟，不越界</span>
+            </li>
+            <li class="rule-item success">
+              <i class="fa fa-check-circle"></i>
+              <span>烟蒂、包装等垃圾放入专用回收容器</span>
+            </li>
+            <li class="rule-item success">
+              <i class="fa fa-check-circle"></i>
+              <span>吸烟后及时离开，不占用吸烟点长时间逗留</span>
+            </li>
+            <li class="rule-item success">
+              <i class="fa fa-check-circle"></i>
+              <span>尊重他人健康，避免在人群密集处吸烟</span>
+            </li>
+            <li class="rule-item success">
+              <i class="fa fa-check-circle"></i>
+              <span>积极参与控烟宣传，共建健康麻城</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 文明倡议 -->
+  <section id="initiative" class="initiative-section">
+    <div class="container">
+      <div class="section-title animate-fadeIn">
+        <h3>麻城市文明吸烟倡议书</h3>
+        <p>让我们携手共建无烟清新的麻城公共环境</p>
+      </div>
+      
+      <div class="initiative-card animate-fadeIn delay-100">
+        <div class="initiative-content">
+          <p>尊敬的麻城市民朋友们：</p>
+          <p>吸烟有害健康，且二手烟同样危害他人健康。为营造健康、文明、和谐的麻城公共环境，我们向全体市民发出如下倡议：</p>
+          <ol>
+            <li>遵守法律法规，不在禁烟区域吸烟，自觉前往指定吸烟点；</li>
+            <li>增强文明意识，不乱扔烟蒂，保持吸烟点环境卫生；</li>
+            <li>尊重他人健康，避免在孕妇、儿童、老人等人群附近吸烟；</li>
+            <li>积极参与控烟，主动劝阻不文明吸烟行为；</li>
+            
+          </ol>
+          <p>让我们共同行动起来，从自身做起，践行文明吸烟行为，为建设美丽、健康、和谐的麻城贡献一份力量！</p>
+          <div class="initiative-sign">
+            <p>麻城市烟草专卖局（营销部）</p>
+            <p>2025年</p>
+          </div>
+        </div>
+        
+        <!-- 承诺按钮 -->
+        <div class="initiative-btn">
+          <button class="btn" id="signBtn">
+            <i class="fa fa-pencil"></i>
+            我承诺：遵守麻城文明吸烟规范
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 底部信息 -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>麻城市文明吸烟点</h4>
+          <p>共建无烟环境，共享健康麻城</p>
+        </div>
+        <div class="footer-col">
+          <h4>联系我们</h4>
+          <ul>
+            <li><i class="fa fa-phone"></i> 咨询热线：2912672</li>
+            
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>相关链接</h4>
+          <ul>
+            <li><a href="#">麻城市控烟条例</a></li>
+            <li><a href="#">吸烟健康知识</a></li>
+            <li><a href="#">麻城市戒烟服务中心</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        © 2025 麻城市文明吸烟点管理中心 版权所有
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 弹窗控制
+    function openPopup(popupId) {
+      const popup = document.getElementById(popupId);
+      popup.style.display = 'flex';
+      event.stopPropagation();
+    }
+
+    function closePopup(popupId) {
+      const popup = document.getElementById(popupId);
+      popup.style.display = 'none';
+    }
+
+    // 点击弹窗外部关闭
+    window.onclick = function(event) {
+      if (event.target.classList.contains('popup')) {
+        event.target.style.display = 'none';
+      }
+    }
+
+    // 承诺按钮交互
+    const signBtn = document.getElementById('signBtn');
+    signBtn.addEventListener('click', function() {
+      if (confirm('您确定要遵守麻城市文明吸烟规范吗？')) {
+        this.innerHTML = '<i class="fa fa-check"></i> 已承诺：遵守麻城文明吸烟规范';
+        this.classList.remove('btn');
+        this.classList.add('btn-success');
+        this.disabled = true;
+        
+        // 自定义提示弹窗
+        const tip = document.createElement('div');
+        tip.style.position = 'fixed';
+        tip.style.top = '50%';
+        tip.style.left = '50%';
+        tip.style.transform = 'translate(-50%, -50%)';
+        tip.style.padding = '15px 20px';
+        tip.style.backgroundColor = 'rgba(0,0,0,0.7)';
+        tip.style.color = 'white';
+        tip.style.borderRadius = '8px';
+        tip.style.zIndex = '99999';
+        tip.innerText = '感谢您的承诺！让我们共同维护麻城文明吸烟环境。';
+        document.body.appendChild(tip);
+        
+        setTimeout(() => {
+          document.body.removeChild(tip);
+        }, 2000);
+      }
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
